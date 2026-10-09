@@ -226,7 +226,7 @@ html.touch #keys{display:none!important}
 </div>
 
 <script>
-const BUILD_ID='77621e67c0e7';
+const BUILD_ID='acee1a0fa9fd';
 (()=>{
 'use strict';
 // ================= Core constants =================
@@ -3836,7 +3836,7 @@ async function leaderAeris(){
   await say('AERIS: So, a new breeze blows into my Gym.');
   await say('AERIS: I am AERIS, Leader of the Skyreach Gym. My Galekin fly on the gale itself.');
   await say('AERIS: Show me you can stand your ground against the storm!');
-  const r=await runBattle({trainer:{name:'Leader AERIS',team:[['puffwing',11],['kitewing',12],['tempestral',13]],leader:true,
+  const r=await runBattle({trainer:{name:'Leader AERIS',team:[['puffwing',11],['dandelift',12],['gullet',13]],leader:true,
     defeat:'AERIS: ...The wind has chosen you. I concede.'}});
   if(r!=='win') return;
   await say('AERIS: You stood firm where most are swept away.');
