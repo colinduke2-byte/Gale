@@ -226,7 +226,7 @@ html.touch #keys{display:none!important}
 </div>
 
 <script>
-const BUILD_ID='acee1a0fa9fd';
+const BUILD_ID='b358fe3615a9';
 (()=>{
 'use strict';
 // ================= Core constants =================
@@ -4210,10 +4210,9 @@ async function startMenu(){
     else if(i===1){ if(await bagFlow(false)==='close') return; }
     else if(i===2) await openUI(new Galedex());
     else if(i===5){ if(await saveMenu()==='close') return; }
-    else if(i===6){ const o=await choose(['TEXT SPEED',`GUIDE: ${G.opt&&G.opt.guide===false?'OFF':'ON'}`,`GAME SPEED: ${SPEED}x`,`BATTLE ANIMS: ${G.opt&&G.opt.anims===false?'OFF':'ON'}`,`AUTO SAVE: ${AUTOSAVE?'ON':'OFF'}`,`SHINY HUNT: ${G.opt&&G.opt.hunt?'ON':'OFF'}`,`RANDOMIZER: ${G.rando?'ON':'OFF'}`,`MUSIC: ${MUSIC_ON?'ON':'OFF'}`,`SKY FX: ${G.opt&&G.opt.skyfx===false?'OFF':'ON'}`,`FOLLOWER: ${G.opt&&G.opt.follower?'ON':'OFF'}`,'CONTROLS',`FRAME RATE: ${FPS}`,'VOLUME'],{x:124,y:2,w:112,title:'OPTIONS',rowH:11});
+    else if(i===6){ const o=await choose(['TEXT SPEED',`GUIDE: ${G.opt&&G.opt.guide===false?'OFF':'ON'}`,`GAME SPEED: ${SPEED}x`,`BATTLE ANIMS: ${G.opt&&G.opt.anims===false?'OFF':'ON'}`,`AUTO SAVE: ${AUTOSAVE?'ON':'OFF'}`,`SHINY HUNT: ${G.opt&&G.opt.hunt?'ON':'OFF'}`,`RANDOMIZER: ${G.rando?'ON':'OFF'}`,`MUSIC: ${MUSIC_ON?'ON':'OFF'}`,`SKY FX: ${G.opt&&G.opt.skyfx===false?'OFF':'ON'}`,`FOLLOWER: ${G.opt&&G.opt.follower?'ON':'OFF'}`,'CONTROLS','SCREEN & SOUND'],{x:124,y:2,w:112,title:'OPTIONS',rowH:11});
       if(o===10&&typeof controlsMenu==='function') await controlsMenu();
-      if(o===12) await volumeMenu();
-      if(o===11){ setFps(FPS===60?120:60); await say(FPS===120?'FRAME RATE is 120. It needs a 120 Hz screen, and uses more battery. iPhone browsers stay at 60.':'FRAME RATE is 60.'); }
+      if(o===11) await volumeMenu();
       if(o===9){ G.opt=G.opt||{}; G.opt.follower=!G.opt.follower; await say(G.opt.follower?'FOLLOWER is ON. Your lead Galekin walks behind you. Choose WALK WITH ME on the CREW screen to pick a different one.':'FOLLOWER is OFF.'); }
       if(o===8){ G.opt=G.opt||{}; G.opt.skyfx=G.opt.skyfx===false; await say(G.opt.skyfx===false?'Sky effects are OFF. No rain, snow, wind or drifting petals will be drawn.':'Sky effects are ON.'); }
       if(o===7){ setMusic(!MUSIC_ON); await say(MUSIC_ON?'Music is ON.':'Music is OFF. Sound effects still play.'); }
@@ -4407,10 +4406,14 @@ async function quitToTitle(){
   await tween(500,p=>FX.fade=p); location.reload(); return true;
 }
 
-// OPTIONS > VOLUME: music and sound effects each step 100% > 75% > 50% > 25%. MUSIC: OFF and the Sound button still silence them.
+// OPTIONS > SCREEN & SOUND: screen direction, frame rate, and music and sound volume (100% > 75% > 50% > 25%).
+// MUSIC: OFF and the Sound button still silence them.
 async function volumeMenu(){ const step=v=>v>0.9?0.75:v>0.6?0.5:v>0.3?0.25:1, pc=v=>Math.round(v*100)+'%';
-  for(let k=0;;){ const c=await choose([`MUSIC: ${pc(MUS_VOL)}`,`SOUND: ${pc(SFX_VOL)}`,'BACK'],{x:124,y:40,w:112,title:'VOLUME',rowH:11,start:k});
-    if(c===0){ setVolumes(step(MUS_VOL),SFX_VOL); k=0; } else if(c===1){ setVolumes(MUS_VOL,step(SFX_VOL)); sfx('get'); k=1; } else return; } }
+  for(let k=0;;){ const c=await choose([`SCREEN: ${ORIENT.mode}`,`FRAME RATE: ${FPS}`,`MUSIC: ${pc(MUS_VOL)}`,`SOUND: ${pc(SFX_VOL)}`,'BACK'],{x:124,y:30,w:112,title:'SCREEN & SOUND',rowH:11,start:k});
+    if(c===0){ k=0; const i=await choose(['AUTO','SIDEWAYS','UPRIGHT'],{x:124,y:30,w:112,title:'SCREEN',rowH:11,start:ORIENT_MODES.indexOf(ORIENT.mode)});
+      if(i>=0){ const r=await setOrient(ORIENT_MODES[i]); await say(orientMsg(ORIENT_MODES[i],r)); } }
+    else if(c===1){ k=1; setFps(FPS===60?120:60); await say(FPS===120?'FRAME RATE is 120. It needs a 120 Hz screen, and uses more battery. iPhone browsers stay at 60.':'FRAME RATE is 60.'); }
+    else if(c===2){ setVolumes(step(MUS_VOL),SFX_VOL); k=2; } else if(c===3){ setVolumes(MUS_VOL,step(SFX_VOL)); sfx('get'); k=3; } else return; } }
 // ================= Battle =================
 let BT=null;
 const FX={fade:0,flash:0,bars:0};
@@ -25730,7 +25733,7 @@ const HOWTO=[
   ['CONTROLS',`${document.documentElement.classList.contains('touch')?'Use the arrow pad to walk and the A and B buttons on screen.\n':''}Move: arrow keys or WASD\nA (talk, confirm): Z or Enter\nB (back, hold to run): X or Esc\nMenu: M   Bike: V   Fast-forward: F\nGamepads work too. Change keys in OPTIONS > CONTROLS.`],
   ['BATTLES','Pick FIGHT and a move. Moves that match a weakness hit much harder, and the game tells you when they do.\nWeaken a wild Galekin, then throw an orb from your BAG to catch it. Low HP or a status like sleep makes catching easier.'],
   ['STAYING SAFE','Heal your crew for free at any Galekin Center. If your whole crew faints, you drop some money and wake up somewhere safe, usually the last Center you visited.\nThe GUIDE in the menu always tells you where to go next, and the JOURNAL keeps track of quests.'],
-  ['SAVING AND OPTIONS','The game saves itself as you play. You can also save any time from the menu under SAVE.\nEXPORT CODE copies your journey as a code you can move to another device.\nOPTIONS has music and sound volume, text speed, frame rate and more.\nSomething went wrong? SAVE > BUG REPORT gives you a code to send.'],
+  ['SAVING AND OPTIONS','The game saves itself as you play. You can also save any time from the menu under SAVE.\nEXPORT CODE copies your journey as a code you can move to another device.\nOPTIONS > SCREEN & SOUND turns the screen sideways and sets the volume. OPTIONS also has text speed and more.\nSomething went wrong? SAVE > BUG REPORT gives you a code to send.'],
 ];
 class HowToPlay{
   constructor(){ this.p=0; }
@@ -25747,7 +25750,30 @@ class HowToPlay{
 }
 { const _wu=WaitA.prototype.update; WaitA.prototype.update=function(){ if(scene==='title'&&ui[ui.length-1]===this&&hit('b')){ sfx('select'); openUI(new HowToPlay()); return; } _wu.call(this); }; }
 { const _dt=drawTitle; drawTitle=function(){ _dt(); if(ui.length===1&&ui[0] instanceof WaitA) text('B: HOW TO PLAY',4,VH-9,'rgba(30,42,58,.6)',6.5,700); }; }
-if(typeof window!=='undefined') window.__galeExt=Object.assign(window.__galeExt||{},{HowToPlay,HOWTO,volumeMenu:()=>volumeMenu(),musVolume:()=>musVolume(),vol:()=>({SFX_VOL,MUS_VOL})});
+// ---------- Screen direction (OPTIONS > SCREEN & SOUND > SCREEN) ----------
+// AUTO follows the phone. SIDEWAYS and UPRIGHT hold the game that way even when the phone's rotation lock is on, where
+// the phone allows it: always in the Android app, and in Android browsers or the home-screen app (which go full screen
+// to do it). iPhone browsers do not let a page turn the screen, so there the game explains how to turn it by hand.
+const ORIENT_MODES=['AUTO','SIDEWAYS','UPRIGHT'];
+const ORIENT={mode:'AUTO'}; try{ const m=localStorage.getItem('gale-orient'); if(ORIENT_MODES.includes(m)) ORIENT.mode=m; }catch(e){}
+function orientNative(mode){ try{ if(window.GaleNative&&window.GaleNative.setOrientation){ window.GaleNative.setOrientation(mode); return true; } }catch(e){} return false; }
+async function orientLock(mode){
+  if(orientNative(mode)) return 'ok';
+  const so=screen.orientation; if(!so||!so.lock) return 'unsupported';
+  if(mode==='AUTO'){ try{ so.unlock(); }catch(e){} try{ if(document.fullscreenElement&&!matchMedia('(display-mode: standalone)').matches) await document.exitFullscreen(); }catch(e){} return 'ok'; }
+  const want=mode==='SIDEWAYS'?'landscape':'portrait';
+  try{ await so.lock(want); return 'ok'; }catch(e){}
+  try{ if(!document.fullscreenElement&&document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen({navigationUI:'hide'}); await so.lock(want); return 'ok'; }catch(e){}
+  return 'unsupported'; }
+async function setOrient(mode){ ORIENT.mode=mode; try{ localStorage.setItem('gale-orient',mode); }catch(e){} return orientLock(mode); }
+function orientMsg(mode,r){
+  if(mode==='AUTO') return 'SCREEN is AUTO. The game turns with your phone. If it does not turn, switch off your phone\'s rotation lock.';
+  const way=mode==='SIDEWAYS'?'sideways':'upright';
+  if(r==='ok') return `SCREEN is ${mode}. The game now stays ${way}, even with rotation lock on.`;
+  return `SCREEN is ${mode}. Your phone decides which way the screen faces here. Switch off rotation lock (on iPhone: swipe down from the top right corner and tap the lock icon), then turn your phone ${way}. The game fits either way.`; }
+// apply the saved choice: straight away in the Android app; elsewhere on the first tap (going full screen needs one)
+if(ORIENT.mode!=='AUTO'){ if(!orientNative(ORIENT.mode)) window.addEventListener('pointerdown',()=>{ orientLock(ORIENT.mode); },{once:true}); }
+if(typeof window!=='undefined') window.__galeExt=Object.assign(window.__galeExt||{},{ORIENT,setOrient:m=>setOrient(m),HowToPlay,HOWTO,volumeMenu:()=>volumeMenu(),musVolume:()=>musVolume(),vol:()=>({SFX_VOL,MUS_VOL})});
 // ================= Loop =================
 let last=performance.now(), SPEED=1;
 try{ SPEED=Math.min(3,Math.max(1,parseInt(localStorage.getItem('gale-ff'))||1)); }catch(e){}
